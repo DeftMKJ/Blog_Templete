@@ -4,7 +4,7 @@
 
 2. `cd`到项目根目录，`virtualenv -p /usr/local/bin/python3 venv`创建Python3的虚拟环境
 
-3. `. venv/bin/activate`激活虚拟环境
+3. `. venv/bin/activate`激活虚拟环境 `deactivate` 退出
 
 4. `pip install -r requirements.txt` 从requirement文件导入依赖
 
