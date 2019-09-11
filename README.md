@@ -10,3 +10,9 @@
 
 5. `cd mkjwebsite/`进去网站项目 `python manage.py runserver` 启动本地服务即可
 
+
+
+## admin 密码
+
+账号：mikejing 
+密码：mikejing

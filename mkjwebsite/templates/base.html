@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}
+
+    {% endblock %}</title>
+</head>
+<body>
+<div class="title">
+    <h3>
+        <a href="{% url 'blogs_module:blog_index' %}">个人博客网站</a>
+
+    </h3>
+    <div>
+        <a href="{% url 'home' %}">首页</a>
+        <a href="{% url 'blogs_module:blog_index' %}">博客</a>
+    </div>
+
+
+</div>
+<hr>
+{% block content %}
+
+{% endblock %}
+
+
+<style>
+    .title a {
+        text-decoration: None;
+        color: #333;
+    }
+
+    .title h3{
+        display: inline-block;
+    }
+
+    .title div{
+        display: inline-block;
+        margin-left: 1em;
+    }
+
+
+</style>
+
+
+</body>
+</html>
