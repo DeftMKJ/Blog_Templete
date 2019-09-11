@@ -16,3 +16,15 @@
 
 账号：mikejing 
 密码：mikejing
+
+## Pycharm设置
+> 不是用Pycharm的项目如何手动设置Python参数?
+
+1.`.gitignore`该文件已经忽略了`venv`等资源文件，我们一般暴露一个`requirement.txt`就好
+2.`Templates`文件设置，右击----Make Directory as-----Template Folder 文件夹变成紫色，同时需要在Settings.py中设置查找路径
+3.`venv`文件设置，右击----Make Directory as-----Exclusion 变成橙色
+4.根目录设置，右击----Make Directory as-----SourcesRoot 变成蓝色
+5.模板文件提示，Pythcharm----Preference-----Language&Framework-----Python Template Languages设置成Django，这样模板文件就有了模板提示
+6.代码提示，资源跳转  Pythcharm----Preference-----Language&Framework-----Django------设置参数
+![](pycharm_setting.png)
+
