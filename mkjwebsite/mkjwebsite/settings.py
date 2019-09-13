@@ -32,12 +32,12 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin', # admin 组件
-    'django.contrib.auth',
-    'django.contrib.contenttypes', # 计数组件
-    'django.contrib.sessions', # session 组件
-    'django.contrib.messages',
-    'django.contrib.staticfiles', # 静态文件组件
-    'blogs', # 博客组件
+    'django.contrib.auth', # 身份认证系统
+    'django.contrib.contenttypes', # 计数组件 内容类型框架
+    'django.contrib.sessions', # session 会话框架 组件
+    'django.contrib.messages', # 消息框架
+    'django.contrib.staticfiles', # 静态文件管理组件
+    'blogs',
 ]
 
 MIDDLEWARE = [
@@ -119,3 +119,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR,'static')
+]

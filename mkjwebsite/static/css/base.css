@@ -1,0 +1,19 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.nav a {
+    text-decoration: None;
+    color: #333;
+    padding: 10px 10px;
+}
+
+.nav h3 {
+    display: inline-block;
+}
+
+.nav {
+    background-color: lightgray;
+    padding: 15px 20px;
+}

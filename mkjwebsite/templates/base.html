@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,43 +6,27 @@
     <title>{% block title %}
 
     {% endblock %}</title>
+
+    {% block cssstyle %}
+
+    {% endblock %}
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
 </head>
 <body>
-<div class="title">
+<div class="nav">
     <h3>
         <a href="{% url 'blogs_module:blog_index' %}">个人博客网站</a>
 
     </h3>
-    <div>
-        <a href="{% url 'home' %}">首页</a>
-        <a href="{% url 'blogs_module:blog_index' %}">博客</a>
-    </div>
-
-
+    <a href="{% url 'home' %}">首页</a>
+    <a href="{% url 'blogs_module:blog_index' %}">博客</a>
 </div>
 <hr>
 {% block content %}
 
 {% endblock %}
-
-
-<style>
-    .title a {
-        text-decoration: None;
-        color: #333;
-    }
-
-    .title h3{
-        display: inline-block;
-    }
-
-    .title div{
-        display: inline-block;
-        margin-left: 1em;
-    }
-
-
-</style>
 
 
 </body>

@@ -1,4 +1,10 @@
+
 {% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block cssstyle %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
 
 {% block title %}
     个人博客网站
@@ -6,5 +12,6 @@
 
 
 {% block content %}
-    <h3>欢迎来到宓珂璟的网站</h3>
+    <h1 class="content">欢迎来到宓珂璟的网站</h1>
+
 {% endblock %}
