@@ -1,9 +1,8 @@
-
 {% extends 'base.html' %}
 {% load staticfiles %}
 
 {% block cssstyle %}
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'home.css' %}">
 {% endblock %}
 
 {% block title %}
@@ -11,7 +10,11 @@
 {% endblock %}
 
 
+{% block home_active %}
+    active
+{% endblock %}
+
+
 {% block content %}
     <h1 class="content">欢迎来到宓珂璟的网站</h1>
-
 {% endblock %}

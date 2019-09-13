@@ -4,6 +4,10 @@
     {{ blog_type.type_name }}
 {% endblock %}
 
+{% block blog_active %}
+    active
+{% endblock %}
+
 {% block content %}
     {% for blog in blogs %}
         <a href="{% url 'blogs_module:blog_details' blog.pk %}">
@@ -17,3 +21,4 @@
     <hr>
     <p>一共有{{ blogs|length }}篇博客</p>
 {% endblock %}
+
