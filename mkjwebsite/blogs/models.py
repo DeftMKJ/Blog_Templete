@@ -19,3 +19,7 @@ class Blog(models.Model):
 
     def __str__(self):
         return "<Blog:%s>" % self.title
+
+    # 添加作用分页，主要需要数据库迁移
+    class Meta:
+        ordering = ['-create_time']
