@@ -6,6 +6,7 @@ from .models import Blog, BlogType
 def blog_index(request):
     context = {}
     context['blogs'] = Blog.objects.all()
+    context['blogTypes'] = BlogType.objects.all()
     return render(request, 'blogs/blog_index.html', context)
 
 def blog_types(request, blog_type):
@@ -13,6 +14,7 @@ def blog_types(request, blog_type):
     blogType =  get_object_or_404(BlogType, pk=blog_type)
     context['blogs'] = Blog.objects.filter(blog_type=blogType)
     context['blog_type'] = blogType
+    context['blogTypes'] = BlogType.objects.all()
     return render(request, 'blogs/blog_type_list.html', context)
 
 
