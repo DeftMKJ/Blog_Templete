@@ -78,6 +78,15 @@ def blog_types(request, blog_type):
 
 
 def blog_details(request, blog_pk):
+    print("测试一下%s"%blog_pk)
+    blog =  get_object_or_404(Blog, pk=blog_pk)
+    pre_blog = Blog.objects.filter(create_time__gt=blog.create_time).last()
+    next_blog = Blog.objects.filter(create_time__lt=blog.create_time).first()
+    print(pre_blog)
+    print(next_blog)
+
     context = {}
-    context['blog'] = get_object_or_404(Blog, pk=blog_pk)
+    context['blog'] = blog
+    context['previous_blog'] = pre_blog
+    context['next_blog'] = next_blog
     return render(request, 'blogs/blog_detail.html', context)

@@ -67,7 +67,11 @@
                                     {% if page_num == '...' %}
                                         <li><span>{{ page_num }}</span></li>
                                     {% else %}
-                                        <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                                        {% if page_num == page_of_blogs.number %}
+                                            <li class="active"><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                                        {% else %}
+                                            <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                                        {% endif %}
                                     {% endif %}
 
                                 {% endfor %}
