@@ -110,6 +110,17 @@
                     </div>
                 </div>
 
+                <div class="panel panel-default">
+                    <div class="panel-heading">按时间归档</div>
+                    <div class="panel-body">
+                        <ul class="list-unstyled">
+                            {% for blogDate in blogDates %}
+                                <li><a href="{% url 'blogs_module:blog_dates' blogDate.year blogDate.month %}">{{ blogDate|date:"Y年m月" }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
