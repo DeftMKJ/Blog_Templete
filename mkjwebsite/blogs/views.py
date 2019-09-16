@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Blog, BlogType
 from django.core.paginator import Paginator
+from django.db.models import Count
 from django.conf import settings
 
 
@@ -31,11 +32,19 @@ def blog_datas_common(request, lists):
     if page_range[-1] != paginator.num_pages:
         page_range.append(paginator.num_pages)
 
+    # 提取日期分类中的文章数 dict来存取
+    blog_dates_tags =  Blog.objects.dates('create_time', 'month', 'DESC')
+    blog_dates_dict = {}
+    for date in blog_dates_tags:
+        blog_dates_dict[date] = Blog.objects.filter(create_time__year=date.year, create_time__month=date.month).count()
+
+
+
     context = {}
     context['page_of_blogs'] = page_of_blogs
     context['page_range'] = page_range
-    context['blogTypes'] = BlogType.objects.all()
-    context['blogDates'] = Blog.objects.dates('create_time', 'month', 'DESC')
+    context['blogTypes'] = BlogType.objects.annotate(type_count=Count('blog')) # model直接挂一个字段type_count
+    context['blogDates'] = blog_dates_dict
     return context
 
 
