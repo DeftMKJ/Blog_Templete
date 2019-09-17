@@ -23,7 +23,7 @@
                     <li>分类：<a href="{% url 'blogs_module:blog_types' blog.blog_type.pk %}">{{ blog.blog_type }}</a></li>
                     <li>日期：{{ blog.create_time|date:"Y-m-d H:i:s" }}</li>
                 </ul>
-                <p class="blog_detail_content">{{ blog.content }}</p>
+                <p class="blog_detail_content">{{ blog.content|safe }}</p>
 
                 <div>
 

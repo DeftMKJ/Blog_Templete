@@ -6,9 +6,10 @@
 
 3. `. venv/bin/activate`激活虚拟环境 `deactivate` 退出
 
-4. `pip install -r requirements.txt` 从requirement文件导入依赖
+4. `pip install -r requirements.txt` 从requirement文件导入依赖  `pip freeze > requirements.txt` 导出到指定路径文本文件
 
 5. `cd mkjwebsite/`进去网站项目 `python manage.py runserver` 启动本地服务即可
+
 
 
 
@@ -47,13 +48,19 @@
 - [ ] Django Form表单的应用
 - [ ] 订阅，邮箱推送
 - [ ] 部署清单 Nginx + uWSGI  或者  Apache + mod_wsgi
+- [ ] 静态资源搜集
 - [ ] 站内消息通知
 - [ ] 简单搜索
 - [ ] 数据库迁移，部署Mysql
+
 
 ## 阶段性总结
 - [ ] Django整体结构和配置文件分析
 - [ ] CSRF，CSS 原理分析
 - [ ] Django中间件原理分析
 - [ ] Django请求整个过程流转
+
+
+## 免费API搜集
+![](https://github.com/fangzesheng/free-api)
 
