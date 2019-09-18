@@ -52,6 +52,7 @@
 - [ ] 站内消息通知
 - [ ] 简单搜索
 - [ ] 数据库迁移，部署Mysql
+- [ ] 汉化（特别是时间，最好用timezone模块取值，通过settings进行时区校准）
 
 
 ## 阶段性总结
@@ -63,4 +64,8 @@
 
 ## 免费API搜集
 ![](https://github.com/fangzesheng/free-api)
+
+
+## ContentType
+目前理解为一个中间关系Model，可以关联挂载数据到任何模型，比如Blog和统计ReamNum，ReadNum基于ContentType后再就可以关联到Blog上面
 

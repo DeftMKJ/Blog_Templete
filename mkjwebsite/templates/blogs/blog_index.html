@@ -35,6 +35,9 @@
                                         <li><span
                                                 class="glyphicon glyphicon-time"></span> {{ blog.create_time|date:"Y-m-d" }}
                                         </li>
+                                         <li>
+                                             阅读:{{ blog.get_read_num }}
+                                        </li>
                                     </ul>
                                     <p>{{ blog.content |striptags | truncatechars:130 |safe}}</p>
                                 </div>

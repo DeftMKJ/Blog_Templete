@@ -35,9 +35,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',  # session 会话框架 组件
     'django.contrib.messages',  # 消息框架
     'django.contrib.staticfiles',  # 静态文件管理组件
-    'ckeditor',
-    'ckeditor_uploader',
-    'blogs',
+    'ckeditor', # 富文本编辑器
+    'ckeditor_uploader', # 后台图片上传
+    'blogs', # 博客应用
+    'read_statistics',
 ]
 
 MIDDLEWARE = [
@@ -103,6 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'zh-hans'
 
+# timezone 获取的就是东八区的时间了
 TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True

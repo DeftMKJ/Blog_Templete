@@ -3,6 +3,7 @@ from .models import Blog, BlogType
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.conf import settings
+from read_statistics.utils import read_statistics_by_every_read
 
 
 def blog_datas_common(request, lists):
@@ -33,17 +34,15 @@ def blog_datas_common(request, lists):
         page_range.append(paginator.num_pages)
 
     # 提取日期分类中的文章数 dict来存取
-    blog_dates_tags =  Blog.objects.dates('create_time', 'month', 'DESC')
+    blog_dates_tags = Blog.objects.dates('create_time', 'month', 'DESC')
     blog_dates_dict = {}
     for date in blog_dates_tags:
         blog_dates_dict[date] = Blog.objects.filter(create_time__year=date.year, create_time__month=date.month).count()
 
-
-
     context = {}
     context['page_of_blogs'] = page_of_blogs
     context['page_range'] = page_range
-    context['blogTypes'] = BlogType.objects.annotate(type_count=Count('blog')) # model直接挂一个字段type_count
+    context['blogTypes'] = BlogType.objects.annotate(type_count=Count('blog'))  # model直接挂一个字段type_count
     context['blogDates'] = blog_dates_dict
     return context
 
@@ -72,10 +71,13 @@ def blog_dates(request, year, month):
 
 def blog_details(request, blog_pk):
     blog = get_object_or_404(Blog, pk=blog_pk)
+    key = read_statistics_by_every_read(request, blog)
     pre_blog = Blog.objects.filter(create_time__gt=blog.create_time).last()
     next_blog = Blog.objects.filter(create_time__lt=blog.create_time).first()
     context = {}
     context['blog'] = blog
     context['previous_blog'] = pre_blog
     context['next_blog'] = next_blog
-    return render(request, 'blogs/blog_detail.html', context)
+    response = render(request, 'blogs/blog_detail.html', context)
+    response.set_cookie(key, True)
+    return response
