@@ -30,6 +30,30 @@ def get_seven_days_read_statistics(contentType):
         deltaDate = today - datetime.timedelta(days=i)
         dates.append(deltaDate.strftime("%m-%d"))
         read_details = ReadNumDetail.objects.filter(content_type=contentType, read_date=deltaDate)
-        result =  read_details.aggregate(read_sum=Sum('read_num'))
+        result = read_details.aggregate(read_sum=Sum('read_num'))
         sevens_counts.append(result['read_sum'] or 0)
     return dates, sevens_counts
+
+
+def get_hot_today_read_statistics(contentType):
+    today = timezone.now().date()
+    results = ReadNumDetail.objects.filter(content_type=contentType, read_date=today).order_by('-read_num')
+    return results[:2]
+
+
+def get_hot_yestoday_read_statistics(contentType):
+    today = timezone.now().date()
+    yesterday = today - datetime.timedelta(days=1)
+    results = ReadNumDetail.objects.filter(content_type=contentType, read_date=yesterday).order_by('-read_num')
+    return results[:7]
+
+# 此方法由于分组统计后只剩下content_type object_id 和 read_num_sum 不好直接拿到title，因此需要反向关联  类似最正常的 object_set
+# def get_hot_7_read_statistics(contentType):
+#     today = timezone.now().date()
+#     seven_days = today - datetime.timedelta(days=7)
+#     results = ReadNumDetail.objects\
+#         .filter(content_type=contentType, read_date__lt=today, read_date__gte=seven_days)\
+#         .values('content_type', 'object_id')\
+#         .annotate(read_num_sum=Sum('read_num'))\
+#         .order_by('-read_num_sum')
+#     return results[:7]

@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.contenttypes.models import ContentType
-from read_statistics.models import ReadNumExtension
+from read_statistics.models import ReadNumExtension, ReadNumDetail
+from django.contrib.contenttypes.fields import GenericRelation
 
 
 class BlogType(models.Model):
@@ -19,6 +20,7 @@ class Blog(models.Model,ReadNumExtension):
     author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     create_time = models.DateTimeField(auto_now_add=True)
     last_update_time = models.DateTimeField(auto_now=True)
+    readDetails = GenericRelation(ReadNumDetail)  # 反向关联获取
 
 
     def __str__(self):

@@ -129,5 +129,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # 配置ckeditor
 CKEDITOR_UPLOAD_PATH = 'upload/'
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'hot_blog_reads_cache_table',
+    }
+}
+
 # 自定义属性
 EACH_PAGE_NUMBERS = 6
+
+

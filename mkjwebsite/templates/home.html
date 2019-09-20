@@ -20,6 +20,39 @@
     <h1 class="content">欢迎来到宓珂璟的网站</h1>
     <!-- 图表容器 DOM -->
     <div id="container"></div>
+    <div class="hot_blog">
+        <h4>今日热门博客</h4>
+        <ul>
+            {% for read_detail in todays_hots %}
+                <li><a href="{% url 'blogs_module:blog_details' read_detail.object_id %}">{{ read_detail.content_object.title }}({{ read_detail.read_num }})</a></li>
+            {% empty %}
+                暂无今日热门
+            {% endfor %}
+
+        </ul>
+    </div>
+    <div class="hot_blog">
+        <h4>昨日热门博客</h4>
+        <ul>
+            {% for read_detail in yesterday_hots %}
+                <li><a href="{% url 'blogs_module:blog_details' read_detail.object_id %}">{{ read_detail.content_object.title }}({{ read_detail.read_num }})</a></li>
+            {% empty %}
+                暂无今日热门
+            {% endfor %}
+
+        </ul>
+    </div>
+    <div class="hot_blog">
+        <h4>过去7天热门博客</h4>
+        <ul>
+            {% for blog in seven_read_hots %}
+                <li><a href="{% url 'blogs_module:blog_details' blog.id %}">{{ blog.title }}({{ blog.read_num_sum }})</a></li>
+            {% empty %}
+                暂无今日热门
+            {% endfor %}
+
+        </ul>
+    </div>
     <script>
         // 图表配置
         var options = {
