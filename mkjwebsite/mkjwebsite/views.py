@@ -9,6 +9,10 @@ from django.db.models import Sum
 from django.core.cache import cache
 from django.contrib import auth
 from django.urls import reverse
+from .forms import LoginForm
+from django.contrib import auth
+from django import forms
+
 
 def get_seven_hots_read_statistics():
     today = timezone.now().date()
@@ -35,8 +39,6 @@ def home(request):
     else:
         print('读取缓存')
 
-
-
     context['seven_read_counts'] = counts
     context['dates'] = dates
     context['todays_hots'] = get_hot_today_read_statistics(contentType)
@@ -47,16 +49,17 @@ def home(request):
 
 
 def login(request):
-    name =  request.POST.get('name','')
-    password = request.POST.get('password', '')
-    user = auth.authenticate(request, username=name, password=password)
-
-    refer = request.META.get('HTTP_REFERER',reverse('home'))
-    if user is not None:
-        auth.login(request, user)
-        # Redirect to a success page.
-        return redirect(refer)
+    if request.method == 'POST':
+        loginForm = LoginForm(request.POST)
+        if loginForm.is_valid():
+            user = loginForm.cleaned_data['user']
+            auth.login(request, user)
+            return redirect(request.GET.get('from', reverse('home')))
     else:
-        # Return an 'invalid login' error message.
-        return render(request,'error.html',{'message':'登录失败！！！'})
+        loginForm = LoginForm()
+    context = {}
+    context['loginform'] = loginForm
+    return render(request, 'login.html', context)
 
+def register(request):
+    pass

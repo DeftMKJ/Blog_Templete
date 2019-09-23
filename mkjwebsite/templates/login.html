@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    个人博客登录
+{% endblock %}
+
+{% block cssstyle %}
+    <link rel="stylesheet" href="{% static 'all.css' %}">
+    <link rel="stylesheet" href="{% static 'blog_css/login.css' %}">
+{% endblock %}
+
+
+{% block home_active %}
+    active
+{% endblock %}
+
+
+{% block content %}
+    {# 当前页面进行数据登录判断，跳转根据前面的from来 #}
+    {# http://localhost:8000/login?from=/blogs/detail/41/ #}
+    {#    <form action="" method="POST">#}
+    {#        {% csrf_token %}#}
+    {#        {{ loginform  }}#}
+    {#        <input type="submit" value="登录">#}
+    {#    </form>#}
+
+        <div class="containter">
+            <div class="row">
+                <div class="col-xs-4 col-xs-offset-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">登录</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                {% for field in loginform %}
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    <p class="text-danger">{{ field.errors.as_text }}</p>
+                                {% endfor %}
+                                <span class="pull-left text-danger">{{ login_form.non_field_errors }}</span>
+                                <input type="submit" value="登录" class="btn btn-primary pull-right">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- This snippet uses Font Awesome 5 Free as a dependency. You can download it at fontawesome.io! -->
+{#     <div class="container">#}
+{#        <div class="row">#}
+{#            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">#}
+{#                <div class="card card-signin my-5">#}
+{#                    <div class="card-body">#}
+{#                        <h5 class="card-title text-center">Sign In</h5>#}
+{#                        <form class="form-signin">#}
+{#                            <div class="form-label-group">#}
+{#                                <input type="email" id="inputEmail" class="form-control" placeholder="Email address"#}
+{#                                       required autofocus>#}
+{#                                <label for="inputEmail">Email address</label>#}
+{#                            </div>#}
+{##}
+{#                            <div class="form-label-group">#}
+{#                                <input type="password" id="inputPassword" class="form-control" placeholder="Password"#}
+{#                                       required>#}
+{#                                <label for="inputPassword">Password</label>#}
+{#                            </div>#}
+{##}
+{#                            <div class="custom-control custom-checkbox mb-3">#}
+{#                                <input type="checkbox" class="custom-control-input" id="customCheck1">#}
+{#                                <label class="custom-control-label" for="customCheck1">Remember password</label>#}
+{#                            </div>#}
+{#                            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in#}
+{#                            </button>#}
+{#                            <hr class="my-4">#}
+{#                            <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i#}
+{#                                    class="fab fa-google mr-2"></i> Sign in with Google#}
+{#                            </button>#}
+{#                            <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i#}
+{#                                    class="fab fa-facebook-f mr-2"></i> Sign in with Facebook#}
+{#                            </button>#}
+{#                        </form>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+{% endblock %}

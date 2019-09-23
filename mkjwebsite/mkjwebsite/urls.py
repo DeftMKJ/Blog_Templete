@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^$', views.home, name='home'),
     re_path(r'^login/$', views.login, name='login'),
+    re_path(r'^register/$', views.register, name='register'),
     re_path(r'^comment/', include('comment.urls', namespace='comment_module')),
     re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
     re_path(r'^blogs/', include('blogs.urls', namespace='blogs_module')),
