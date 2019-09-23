@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'ckeditor', # 富文本编辑器
     'ckeditor_uploader', # 后台图片上传
     'blogs', # 博客应用
-    'read_statistics',
+    'read_statistics', # 阅读统计模块
+    'comment', # 评论模块
 ]
 
 MIDDLEWARE = [

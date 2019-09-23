@@ -45,3 +45,13 @@ p.blog_detail_content {
 div.blog_page_container{
     text-align: center;
 }
+
+
+div.comment_container{
+    margin-top: 2em;
+}
+
+.comment_title{
+    padding-bottom: 1em;
+    border-bottom: 1px solid #eee;
+}

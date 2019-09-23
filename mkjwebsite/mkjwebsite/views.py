@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from read_statistics.utils import get_seven_days_read_statistics, get_hot_today_read_statistics, \
     get_hot_yestoday_read_statistics
 from blogs.models import Blog
@@ -7,6 +7,8 @@ import datetime
 from django.utils import timezone
 from django.db.models import Sum
 from django.core.cache import cache
+from django.contrib import auth
+from django.urls import reverse
 
 def get_seven_hots_read_statistics():
     today = timezone.now().date()
@@ -42,3 +44,19 @@ def home(request):
     context['seven_read_hots'] = hot_7_days_blogs
     print(context)
     return render(request, 'home.html', context)
+
+
+def login(request):
+    name =  request.POST.get('name','')
+    password = request.POST.get('password', '')
+    user = auth.authenticate(request, username=name, password=password)
+
+    refer = request.META.get('HTTP_REFERER',reverse('home'))
+    if user is not None:
+        auth.login(request, user)
+        # Redirect to a success page.
+        return redirect(refer)
+    else:
+        # Return an 'invalid login' error message.
+        return render(request,'error.html',{'message':'登录失败！！！'})
+
