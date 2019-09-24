@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title %}
-    个人博客登录
+    个人博客注册
 {% endblock %}
 
 {% block cssstyle %}
@@ -29,13 +29,13 @@
                     <div class="panel-body">
                         <form action="" method="POST">
                             {% csrf_token %}
-                            {% for field in loginform %}
+                            {% for field in registerform %}
                                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                                 {{ field }}
                                 <p class="text-danger">{{ field.errors.as_text }}</p>
                             {% endfor %}
                             <span class="pull-left text-danger">{{ loginform.non_field_errors }}</span>
-                            <input type="submit" value="登录" class="btn btn-primary pull-right">
+                            <input type="submit" value="注册" class="btn btn-primary pull-right">
                         </form>
                     </div>
                 </div>

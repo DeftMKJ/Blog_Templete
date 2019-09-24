@@ -9,8 +9,9 @@ from django.db.models import Sum
 from django.core.cache import cache
 from django.contrib import auth
 from django.urls import reverse
-from .forms import LoginForm
+from .forms import LoginForm, RegisterForm
 from django.contrib import auth
+from django.contrib.auth.models import User
 from django import forms
 
 
@@ -61,5 +62,24 @@ def login(request):
     context['loginform'] = loginForm
     return render(request, 'login.html', context)
 
+
 def register(request):
-    pass
+    if request.method == 'POST':
+        registerform = RegisterForm(request.POST)
+        if registerform.is_valid():
+            username = registerform.cleaned_data['username']
+            email = registerform.cleaned_data['email']
+            password = registerform.cleaned_data['password']
+
+            user = User.objects.create_user(username, email, password)
+            user.save()
+
+            user = auth.authenticate(username=username, password=password)
+            auth.login(request, user)
+
+            return redirect(request.GET.get('from', reverse('home')))
+    else:
+        registerform = RegisterForm()
+    context = {}
+    context['registerform'] = registerform
+    return render(request, 'register.html', context)
