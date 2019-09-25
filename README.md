@@ -39,13 +39,13 @@
 - [x] 博客框架设计，虚拟环境，Pycharm配置
 - [x] 博客列表和详情，博客分页，日期分类，类型分类
 - [x] Bootstrap的应用
-- [ ] 阅读统计，热门博客
-- [ ] 富文本编辑器 md编辑
-- [ ] 评论功能
+- [x] 阅读统计，热门博客
+- [x] 富文本编辑器
+- [x] 评论功能
 - [ ] 用户登陆，第三方登陆功能
 - [ ] 缓存设计
 - [ ] 点赞功能
-- [ ] Django Form表单的应用
+- [x] Django Form表单的应用
 - [ ] 订阅，邮箱推送
 - [ ] 部署清单 Nginx + uWSGI  或者  Apache + mod_wsgi
 - [ ] 静态资源搜集
@@ -60,6 +60,7 @@
 - [ ] CSRF，CSS 原理分析
 - [ ] Django中间件原理分析
 - [ ] Django请求整个过程流转
+- [ ] Django Form表单的详解
 
 
 ## 免费API搜集
@@ -67,5 +68,26 @@
 
 
 ## ContentType
-目前理解为一个中间关系Model，可以关联挂载数据到任何模型，比如Blog和统计ReamNum，ReadNum基于ContentType后再就可以关联到Blog上面
+理解为一个中间关系Model，可以关联挂载数据到任何模型，比如Blog和统计ReamNum，ReadNum基于ContentType后再就可以关联到Blog上面
+
+## CKEditor相关
+- 1、获取CKEditor被选中的内容
+```js
+var mySelection = CKEDITOR.instances.ckStem.getSelection();
+        if (CKEDITOR.env.ie) {
+            mySelection.unlock(true);
+            data = mySelection.getNative().createRange().text;
+        } else {
+            data = mySelection.getNative();
+        }
+````
+- 2、获取CKEditor纯文本
+```js
+var stemTxt=CKEDITOR.instances.CKEditor1.document.getBody().getText(); //取得纯文本
+````
+
+- 3、获取CKEditor带HTML标签的文本
+```js
+var stem = CKEDITOR.instances.CKEditor1.getData();
+```
 

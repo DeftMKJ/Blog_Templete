@@ -7,7 +7,10 @@ from ckeditor.widgets import CKEditorWidget
 class CommentForm(forms.Form):
     content_type = forms.CharField(widget=forms.HiddenInput)
     object_id = forms.IntegerField(widget=forms.HiddenInput)
-    text = forms.CharField(widget=CKEditorWidget(config_name='comment_ckeditor'))
+
+    # error_messages 错误的时候自定义抛出
+    text = forms.CharField(widget=CKEditorWidget(config_name='comment_ckeditor'),
+                           error_messages={'required': '评论内容不能为空'})
 
     def __init__(self, *args, **kwargs):
         if 'user' in kwargs:
@@ -19,7 +22,6 @@ class CommentForm(forms.Form):
             self.cleaned_data['user'] = self.user
         else:
             raise forms.ValidationError('用户未登录')
-
 
         model = self.cleaned_data['content_type']
         object_id = self.cleaned_data['object_id']
