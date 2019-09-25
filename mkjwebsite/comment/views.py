@@ -1,31 +1,22 @@
 from django.shortcuts import render, redirect
-from django.contrib.contenttypes.models import ContentType
 from .models import Comment
 from django.urls import reverse
+from .forms import CommentForm
 
 # Create your views here.
 
 
 def comment_update(request):
-
-    print('测试')
-    print(request.POST.get('object_id', ''))
-    user = request.user
-    text = request.POST.get('comment_text', '')
-    object_id = int(request.POST.get('object_id', ''))
-    content_type = request.POST.get('content_type', '')
-
-    comment_cls =  ContentType.objects.get(model=content_type).model_class()
-    comment_obj = comment_cls.objects.get(pk=object_id)
-
-    comment = Comment()
-
-    comment.content_object = comment_obj
-    comment.text = text
-    comment.user = user
-    comment.save()
-
     refer = request.META.get('HTTP_REFERER', reverse('home'))
-    return redirect(refer)
+    comment_form = CommentForm(request.POST, user=request.user)
+    if comment_form.is_valid():
+        comment = Comment()
+        comment.user = comment_form.cleaned_data['user']
+        comment.text = comment_form.cleaned_data['text']
+        comment.content_object = comment_form.cleaned_data['content_object']
+        comment.save()
+        return redirect(refer)
+    else:
+        pass
 
 

@@ -2,6 +2,8 @@
 {% load staticfiles %}
 {% block cssstyle %}
     <link rel="stylesheet" href="{% static 'blog_css/blog.css' %}">
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
 {% endblock %}
 
 {% block title %}
@@ -55,9 +57,9 @@
                         {{ user }} 欢迎评论
                         <form action="{% url 'comment_module:comment_update' %}" method="post">
                             {% csrf_token %}
-                            <textarea name="comment_text" id="comment_area" cols="100" rows="10"></textarea>
-                            <input type="hidden" name="object_id" value={{ blog.pk }}>
-                            <input type="hidden" name="content_type" value="blog">
+                            {% for comment_form in comment_forms %}
+                                {{ comment_form }}
+                            {% endfor %}
                             <input type="submit" name="commit">
                         </form>
 
@@ -74,7 +76,7 @@
                         {% for comment in comments %}
                             <div>
                                 {{ comment.user.username }}
-                                {{ comment.comment_time|date:"Y:m:d" }}：
+                                {{ comment.comment_time|date:"Y-m-d H:i:s" }}：
                                 {{ comment.text }}
                             </div>
                         {% empty %}

@@ -55,3 +55,7 @@ div.comment_container{
     padding-bottom: 1em;
     border-bottom: 1px solid #eee;
 }
+
+div.django-ckeditor-widget{
+    width: 100%;
+}
