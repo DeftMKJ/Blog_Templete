@@ -16,11 +16,27 @@ def comment_update(request):
         comment.user = comment_form.cleaned_data['user']
         comment.text = comment_form.cleaned_data['text']
         comment.content_object = comment_form.cleaned_data['content_object']
+
+        parent = comment_form.cleaned_data['parent']
+        # 回复评论
+        if not parent is None:
+            comment.parent = parent
+            # 如果父评论的顶级评论是空的，那么顶级就是parent 否则就是上一级的root
+            comment.root = parent.root if not parent.root is None else parent
+            comment.reply_to = parent.user
         comment.save()
+
         res['status'] = "SUCCESS"
         res['username'] = comment.user.username
         res['comment_time'] = comment.comment_time.strftime("%Y:%m:%d %H:%M:%S")
         res['text'] = comment.text
+
+        if not parent is None:
+            res['reply_to'] = comment.reply_to.username
+        else:
+            res['reply_to'] = ''
+        res['pk'] = comment.pk
+        res['root_pk'] = comment.root.pk if not comment.root is None else ''
 
     else:
         res['status'] = "ERROR"

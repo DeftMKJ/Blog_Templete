@@ -79,15 +79,15 @@ def blog_details(request, blog_pk):
     next_blog = Blog.objects.filter(create_time__lt=blog.create_time).first()
 
     ct =  ContentType.objects.get_for_model(blog)
-    comments =  Comment.objects.filter(content_type=ct, object_id=blog_pk)
+    comments =  Comment.objects.filter(content_type=ct, object_id=blog_pk, parent=None)
 
 
     context = {}
     context['blog'] = blog
     context['previous_blog'] = pre_blog
     context['next_blog'] = next_blog
-    context['comments'] = comments
-    context['comment_forms'] = CommentForm(initial={'content_type':ct.model,'object_id':blog.pk})
+    context['comments'] = comments.order_by('-comment_time')
+    context['comment_forms'] = CommentForm(initial={'content_type':ct.model,'object_id':blog.pk,'reply_comment_id':0})
     response = render(request, 'blogs/blog_detail.html', context)
     response.set_cookie(key, True)
     return response

@@ -91,3 +91,6 @@ var stemTxt=CKEDITOR.instances.CKEditor1.document.getBody().getText(); //取得�
 var stem = CKEDITOR.instances.CKEditor1.getData();
 ```
 
+## Form表单
+- 类似这种针对单个字段校验，校验不过抛出异常，校验OK，返回组装  参考comment的`forms.py`
+

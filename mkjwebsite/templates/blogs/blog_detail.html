@@ -57,6 +57,13 @@
                         <form id="comment_form" action="{% url 'comment_module:comment_update' %}" method="post"
                               style="overflow:hidden">
                             <label>{{ user }} 欢迎评论</label>
+
+                            {#  先隐藏 回复会用到 #}
+                            <div id="reply_content_container" style="display:none;">
+                                <p>回复：</p>
+                                <div id="reply_content"></div>
+                            </div>
+
                             {% csrf_token %}
                             {% for comment_form in comment_forms %}
                                 {{ comment_form }}
@@ -76,13 +83,30 @@
                     <h4 class="comment_title">显示评论</h4>
                     <div id="comment_lists">
                         {% for comment in comments %}
-                            <div>
-                                {{ comment.user.username }}
-                                ({{ comment.comment_time|date:"Y-m-d H:i:s" }})：
-                                {{ comment.text | safe }}
+                            <div id="root_{{ comment.pk }}" class="comment">
+                                <span>{{ comment.user.username }}</span>
+                                <span>({{ comment.comment_time|date:"Y-m-d H:i:s" }})：</span>
+                                <div id="comment_{{ comment.pk }}">
+                                    {{ comment.text|safe }}
+                                </div>
+                                <a href="javascript:reply({{ comment.pk }});">回复</a>
+
+                                {% for reply in comment.root_comment.all %}
+                                    <div class="reply">
+                                        <span>{{ reply.user.username }}</span>
+                                        <span>({{ reply.comment_time|date:"Y-m-d H:i:s" }})：</span>
+                                        <span>回复</span>
+                                        <span>{{ reply.reply_to.username }}</span>
+                                        <div id="comment_{{ reply.pk }}">
+                                            {{ reply.text|safe }}
+                                        </div>
+                                        <a href="javascript:reply({{ reply.pk }});">回复</a>
+                                    </div>
+                                {% endfor %}
+
                             </div>
                         {% empty %}
-                            暂无评论
+                            <span id="no_comment">暂无评论</span>
                         {% endfor %}
 
                     </div>
@@ -95,17 +119,27 @@
 
 {% block script_extend %}
     <script type="text/javascript">
-        $("#comment_form").submit(function () {
+        // 点击回复后把变淡隐藏属性赋值  reply_comment_id
+        function reply(reply_comment_id) {
+            $('#reply_comment_id').val(reply_comment_id);
+            var html = $('#comment_' + reply_comment_id).html()
 
+            $('#reply_content').html(html)
+            $('#reply_content_container').show()
+
+
+            $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function () {
+                CKEDITOR.instances['id_text'].focus();
+            });
+        }
+
+        $("#comment_form").submit(function () {
             // 清空之前的错误
             $("#comment_error").text('');
-
-            if (CKEDITOR.instances["id_text"].document.getBody().getText().trim() == ''){
+            if (CKEDITOR.instances["id_text"].document.getBody().getText().trim() == '') {
                 $("#comment_error").text('评论内容不能为空!!!!');
                 return false;
             }
-
-
             // 更新数据到textarea
             CKEDITOR.instances['id_text'].updateElement();
 
@@ -117,10 +151,25 @@
                 success: function (data) {
 
                     if (data['status'] == "SUCCESS") {
-                        // 请求成功
-                        var ht = '<div>'+ data['username'] +'('+ data['comment_time'] +'): '+ data['text'] +'</div>';
-                        $('#comment_lists').prepend(ht)
+                        if ($('#reply_comment_id').val() == '0') {
+                            console.log('顶级评论')
+                            // 评论  头插 prepend comment_lists 整个List进行头插
+                            var comment_html = '<div id="root_' + data['pk'] + '" class="comment"><span>' + data['username'] + '</span><span>(' + data['comment_time'] + ')：</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">回复</a></div>';
+                            $('#comment_lists').prepend(comment_html)
+                        } else {
+                            // 回复 尾部 append 找到对应的顶级评论，尾部append进行尾插
+                            var reply_html = '<div class="reply"><span>' + data['username'] + '</span><span>(' + data['comment_time'] + ')：</span><span>回复</span><span>' + data['reply_to'] + '</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">回复</a></div>';
+                            $('#root_' + data['root_pk']).append(reply_html);
+
+                        }
+                        // 清空editor
                         CKEDITOR.instances['id_text'].setData('');
+                        // 清空评论信息
+                        $('#reply_content_container').hide()
+                        // 移除暂无评论
+                        $('#no_comment').remove()
+                        // 表单评论id置空
+                        $('#reply_comment_id').val('0')
 
                     } else {
                         // 失败
