@@ -59,11 +59,11 @@
                     {% if user.is_authenticated %}
                         <form id="comment_form" action="{% url 'comment_module:comment_update' %}" method="post"
                               style="overflow:hidden">
-                            <label>{{ user }} 欢迎评论</label>
+                            <label>当前登录用户：{{ user }} 欢迎评论~</label>
 
                             {#  先隐藏 回复会用到 #}
                             <div id="reply_content_container" style="display:none;">
-                                <p>回复：</p>
+                                <p id="reply_title">回复：</p>
                                 <div id="reply_content"></div>
                             </div>
 
@@ -139,6 +139,23 @@
             });
         }
 
+        function numFormat(num) {
+            return ('00' + num).substr(-2);
+        }
+
+        function timeFormat(timestamp) {
+            console.log(timestamp)
+            var date = new Date(timestamp * 1000);
+            Y = date.getFullYear() + '-';
+            M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+            D = numFormat(date.getDate()) + ' ';
+            h = numFormat(date.getHours()) + ':';
+            m = numFormat(date.getMinutes()) + ':';
+            s = numFormat(date.getSeconds());
+            return Y + M + D + ' ' + h + ':' + m + ':' + s;
+        }
+
+
         $("#comment_form").submit(function () {
             // 清空之前的错误
             $("#comment_error").text('');
@@ -160,11 +177,11 @@
                         if ($('#reply_comment_id').val() == '0') {
                             console.log('顶级评论')
                             // 评论  头插 prepend comment_lists 整个List进行头插
-                            var comment_html = '<div id="root_' + data['pk'] + '" class="comment"><span>' + data['username'] + '</span><span>(' + data['comment_time'] + ')：</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">回复</a></div>';
+                            var comment_html = '<div id="root_' + data['pk'] + '" class="comment"><span>' + data['username'] + '</span><span>(' + timeFormat(data['comment_time']) + ')：</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">回复</a></div>';
                             $('#comment_lists').prepend(comment_html)
                         } else {
                             // 回复 尾部 append 找到对应的顶级评论，尾部append进行尾插
-                            var reply_html = '<div class="reply"><span>' + data['username'] + '</span><span>(' + data['comment_time'] + ')：</span><span>回复</span><span>' + data['reply_to'] + '</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">回复</a></div>';
+                            var reply_html = '<div class="reply"><span>' + data['username'] + '</span><span>(' + timeFormat(data['comment_time']) + ')：</span><span>回复</span><span>' + data['reply_to'] + '</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">回复</a></div>';
                             $('#root_' + data['root_pk']).append(reply_html);
 
                         }

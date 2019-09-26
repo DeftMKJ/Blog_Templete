@@ -28,7 +28,7 @@ def comment_update(request):
 
         res['status'] = "SUCCESS"
         res['username'] = comment.user.username
-        res['comment_time'] = comment.comment_time.strftime("%Y:%m:%d %H:%M:%S")
+        res['comment_time'] = comment.comment_time.timestamp()
         res['text'] = comment.text
 
         if not parent is None:

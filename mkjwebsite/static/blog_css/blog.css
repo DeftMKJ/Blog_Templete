@@ -69,3 +69,16 @@ div.comment {
 div.reply {
     margin-left: 2em;
 }
+
+div#reply_content_container{
+    border: 1px solid #ececec;
+    background-color: #f8f8f8;
+    border-bottom: none;
+    padding: 1em 1em 1em 1em;
+    overflow: hidden;
+}
+
+p#reply_title{
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 1em;
+}
