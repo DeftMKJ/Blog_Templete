@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load comment_tags %}
+{% load read_tags %}
 {% block cssstyle %}
     <link rel="stylesheet" href="{% static 'blog_css/blog.css' %}">
     <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
@@ -24,7 +26,8 @@
                     <li>作者：{{ blog.author }}</li>
                     <li>分类：<a href="{% url 'blogs_module:blog_types' blog.blog_type.pk %}">{{ blog.blog_type }}</a></li>
                     <li>日期：{{ blog.create_time|date:"Y-m-d H:i:s" }}</li>
-                    <li>阅读：{{ blog.get_read_num }}</li>
+                    <li>阅读：{% get_total_read_count blog %}</li>
+                    <li>评论：({% get_comment_count blog %})</li>
                 </ul>
                 <p class="blog_detail_content">{{ blog.content|safe }}</p>
 
@@ -65,6 +68,8 @@
                             </div>
 
                             {% csrf_token %}
+                            {# 通过模板获取 #}
+                            {% get_comment_form blog as comment_forms %}
                             {% for comment_form in comment_forms %}
                                 {{ comment_form }}
                             {% endfor %}
@@ -82,6 +87,7 @@
                 <div class="comment_container">
                     <h4 class="comment_title">显示评论</h4>
                     <div id="comment_lists">
+                        {% get_comment_lists blog as comments %}
                         {% for comment in comments %}
                             <div id="root_{{ comment.pk }}" class="comment">
                                 <span>{{ comment.user.username }}</span>

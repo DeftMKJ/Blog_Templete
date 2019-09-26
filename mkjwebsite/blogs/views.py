@@ -4,9 +4,9 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.conf import settings
 from read_statistics.utils import read_statistics_by_every_read
-from django.contrib.contenttypes.models import ContentType
-from comment.models import Comment
-from comment.forms import CommentForm
+# from django.contrib.contenttypes.models import ContentType
+# from comment.models import Comment
+# from comment.forms import CommentForm
 
 
 def blog_datas_common(request, lists):
@@ -78,16 +78,17 @@ def blog_details(request, blog_pk):
     pre_blog = Blog.objects.filter(create_time__gt=blog.create_time).last()
     next_blog = Blog.objects.filter(create_time__lt=blog.create_time).first()
 
-    ct =  ContentType.objects.get_for_model(blog)
-    comments =  Comment.objects.filter(content_type=ct, object_id=blog_pk, parent=None)
+    # ct =  ContentType.objects.get_for_model(blog)
+    # comments =  Comment.objects.filter(content_type=ct, object_id=blog_pk, parent=None)
+
+    # context['comments'] = comments.order_by('-comment_time')
+    # context['comment_forms'] = CommentForm(initial={'content_type':ct.model,'object_id':blog.pk,'reply_comment_id':0})
 
 
     context = {}
     context['blog'] = blog
     context['previous_blog'] = pre_blog
     context['next_blog'] = next_blog
-    context['comments'] = comments.order_by('-comment_time')
-    context['comment_forms'] = CommentForm(initial={'content_type':ct.model,'object_id':blog.pk,'reply_comment_id':0})
     response = render(request, 'blogs/blog_detail.html', context)
     response.set_cookie(key, True)
     return response
