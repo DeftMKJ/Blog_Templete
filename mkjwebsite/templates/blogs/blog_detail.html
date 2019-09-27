@@ -63,7 +63,7 @@
 
                             {#  先隐藏 回复会用到 #}
                             <div id="reply_content_container" style="display:none;">
-                                <p id="reply_title">回复：</p>
+                                <p id="reply_title"></p>
                                 <div id="reply_content"></div>
                             </div>
 
@@ -95,7 +95,8 @@
                                 <div id="comment_{{ comment.pk }}">
                                     {{ comment.text|safe }}
                                 </div>
-                                <a href="javascript:reply({{ comment.pk }});">回复</a>
+{#                                <a href="javascript:reply({{ comment.pk }});">回复</a>#}
+                                <a href="javascript:void(0)" onclick="reply('{{ comment.pk }}','{{ comment.user.username }}')">回复</a>
 
                                 {% for reply in comment.root_comment.all %}
                                     <div class="reply">
@@ -106,7 +107,8 @@
                                         <div id="comment_{{ reply.pk }}">
                                             {{ reply.text|safe }}
                                         </div>
-                                        <a href="javascript:reply({{ reply.pk }});">回复</a>
+{#                                        <a href="javascript:reply({{ reply.pk }});">回复</a>#}
+                                        <a href="javascript:void(0)" onclick="reply('{{ reply.pk }}','{{ reply.user.username }}')">回复</a>
                                     </div>
                                 {% endfor %}
 
@@ -126,12 +128,15 @@
 {% block script_extend %}
     <script type="text/javascript">
         // 点击回复后把变淡隐藏属性赋值  reply_comment_id
-        function reply(reply_comment_id) {
+        function reply(reply_comment_id, name) {
+            console.log(reply_comment_id)
+            console.log(name)
             $('#reply_comment_id').val(reply_comment_id);
-            var html = $('#comment_' + reply_comment_id).html()
-
-            $('#reply_content').html(html)
-            $('#reply_content_container').show()
+            var html = $('#comment_' + reply_comment_id).html();
+            var html2 = '<p>回复:' + name + '</p>';
+            $('#reply_content').html(html);
+            $('#reply_title').html(html2)
+            $('#reply_content_container').show();
 
 
             $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function () {
@@ -177,11 +182,11 @@
                         if ($('#reply_comment_id').val() == '0') {
                             console.log('顶级评论')
                             // 评论  头插 prepend comment_lists 整个List进行头插
-                            var comment_html = '<div id="root_' + data['pk'] + '" class="comment"><span>' + data['username'] + '</span><span>(' + timeFormat(data['comment_time']) + ')：</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">回复</a></div>';
+                            var comment_html = '<div id="root_' + data['pk'] + '" class="comment"><span>' + data['username'] + '</span><span>(' + timeFormat(data['comment_time']) + ')：</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:void(0)" onclick="reply(' + "'" + data['pk'] + "'" + ",'" + data['username'] + "'" + ')">回复</a></div>';
                             $('#comment_lists').prepend(comment_html)
                         } else {
                             // 回复 尾部 append 找到对应的顶级评论，尾部append进行尾插
-                            var reply_html = '<div class="reply"><span>' + data['username'] + '</span><span>(' + timeFormat(data['comment_time']) + ')：</span><span>回复</span><span>' + data['reply_to'] + '</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">回复</a></div>';
+                            var reply_html = '<div class="reply"><span>' + data['username'] + '</span><span>(' + timeFormat(data['comment_time']) + ')：</span><span>回复</span><span>' + data['reply_to'] + '</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:void(0)" onclick="reply(' + "'" + data['pk'] + "'" + ",'" + data['username'] + "'" + ')">回复</a></div>';
                             $('#root_' + data['root_pk']).append(reply_html);
 
                         }
