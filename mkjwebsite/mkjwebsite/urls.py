@@ -27,6 +27,7 @@ urlpatterns = [
     re_path(r'^blogs/', include('blogs.urls', namespace='blogs_module')),
     re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
     re_path(r'^login/$', views.login, name='login'),
+    re_path(r'^login_modal/$', views.login_modal, name='login_modal'),
     re_path(r'^register/$', views.register, name='register'),
 ]
 

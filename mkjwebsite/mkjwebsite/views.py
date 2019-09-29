@@ -12,6 +12,7 @@ from django.urls import reverse
 from .forms import LoginForm, RegisterForm
 from django.contrib import auth
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django import forms
 
 
@@ -61,6 +62,17 @@ def login(request):
     context = {}
     context['loginform'] = loginForm
     return render(request, 'login.html', context)
+
+def login_modal(request):
+    loginForm = LoginForm(request.POST)
+    res = {}
+    if loginForm.is_valid():
+        user = loginForm.cleaned_data['user']
+        auth.login(request, user)
+        res['code'] = '200'
+    else:
+        res['code'] = '10008'
+    return JsonResponse(res)
 
 
 def register(request):

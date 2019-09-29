@@ -4,9 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.conf import settings
 from read_statistics.utils import read_statistics_by_every_read
-# from django.contrib.contenttypes.models import ContentType
-# from comment.models import Comment
-# from comment.forms import CommentForm
+from mkjwebsite.forms import LoginForm
 
 
 def blog_datas_common(request, lists):
@@ -89,6 +87,7 @@ def blog_details(request, blog_pk):
     context['blog'] = blog
     context['previous_blog'] = pre_blog
     context['next_blog'] = next_blog
+    context['loginform'] = LoginForm()
     response = render(request, 'blogs/blog_detail.html', context)
     response.set_cookie(key, True)
     return response
