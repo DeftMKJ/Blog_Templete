@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Comment
-from django.urls import reverse
+from django.contrib.contenttypes.models import ContentType
 from .forms import CommentForm
 from django.http import JsonResponse
 
@@ -30,6 +30,7 @@ def comment_update(request):
         res['username'] = comment.user.username
         res['comment_time'] = comment.comment_time.timestamp()
         res['text'] = comment.text
+        res['content_type'] = ContentType.objects.get_for_model(comment).model
 
         if not parent is None:
             res['reply_to'] = comment.reply_to.username

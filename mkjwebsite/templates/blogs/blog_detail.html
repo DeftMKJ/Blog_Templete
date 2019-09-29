@@ -106,12 +106,11 @@
                                 <div class="like"
                                      onclick="likeChange(this, '{% get_content_type comment %}', '{{ comment.pk }}')">
                                     <span class="glyphicon glyphicon-thumbs-up {% get_liked_status comment %}"></span>
-                                    <span class="liked_num">{% get_liked_counts comment %}</span>
-                                    <span>赞同</span>
+                                    <span class="liked_num"> {% get_liked_counts comment %}</span>
                                 </div>
                                 {#                                <a href="javascript:reply({{ comment.pk }});">回复</a>#}
                                 <a href="javascript:void(0)"
-                                   onclick="reply('{{ comment.pk }}','{{ comment.user.username }}')">回复</a>
+                                   onclick="reply('{{ comment.pk }}','{{ comment.user.username }}', '{{ user.is_authenticated }}')">回复</a>
 
                                 {% for reply in comment.root_comment.all %}
                                     <div class="reply">
@@ -126,12 +125,11 @@
                                         <div class="like"
                                              onclick="likeChange(this, '{% get_content_type reply %}', '{{ reply.pk }}')">
                                             <span class="glyphicon glyphicon-thumbs-up {% get_liked_status reply %}"></span>
-                                            <span class="liked_num">{% get_liked_counts reply %}</span>
-                                            <span>赞同</span>
+                                            <span class="liked_num"> {% get_liked_counts reply %}</span>
                                         </div>
                                         {#                                        <a href="javascript:reply({{ reply.pk }});">回复</a>#}
                                         <a href="javascript:void(0)"
-                                           onclick="reply('{{ reply.pk }}','{{ reply.user.username }}')">回复</a>
+                                           onclick="reply('{{ reply.pk }}','{{ reply.user.username }}', '{{ user.is_authenticated }}')">回复</a>
                                     </div>
                                 {% endfor %}
 
@@ -162,9 +160,12 @@
         }
 
         // 点击回复后把变淡隐藏属性赋值  reply_comment_id
-        function reply(reply_comment_id, name) {
+        function reply(reply_comment_id, name, is_login) {
             console.log(reply_comment_id);
             console.log(name);
+            if (is_login == 'False'){
+                alert('用户未登录')
+            }
             $('#reply_comment_id').val(reply_comment_id);
             let html = $('#comment_' + reply_comment_id).html();
             let html2 = '<p>回复:' + name + '</p>';
@@ -172,7 +173,7 @@
             $('#reply_title').html(html2);
             $('#reply_content_container').show();
 
-
+            $('#comment_error').text('');
             $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function () {
                 CKEDITOR.instances['id_text'].focus();
             });
@@ -212,16 +213,43 @@
                 data: $(this).serialize(),
                 cache: false,
                 success: function (data) {
-
+                    console.log(data)
                     if (data['status'] == "SUCCESS") {
                         if ($('#reply_comment_id').val() == '0') {
-                            console.log('顶级评论')
                             // 评论  头插 prepend comment_lists 整个List进行头插
-                            var comment_html = '<div id="root_' + data['pk'] + '" class="comment"><span>' + data['username'] + '</span><span>(' + timeFormat(data['comment_time']) + ')：</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:void(0)" onclick="reply(' + "'" + data['pk'] + "'" + ",'" + data['username'] + "'" + ')">回复</a></div>';
+                            {#var comment_html = '<div id="root_' + data['pk'] + '" class="comment"><span>' + data['username'] + '</span><span>(' + timeFormat(data['comment_time']) + ')：</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:void(0)" onclick="reply(' + "'" + data['pk'] + "'" + ",'" + data['username'] + "'" + ')">回复</a></div>';#}
+                            var comment_html = '<div id="root_{0}" class="comment">' +
+                                '<span>{1}</span>' +
+                                '<span>({2})：</span>' +
+                                '<div id="comment_{0}">{3} </div>' +
+                                '<div class="like" onclick="likeChange(this, \'{4}\', \'{0}\')">' +
+                                    '<span class="glyphicon glyphicon-thumbs-up"></span>' +
+                                    '<span class="liked_num"> 0</span>' +
+                                '</div>' +
+                                '<a href="javascript:void(0)" onclick="reply(\'{0}\',\'{1}\', \'True\')">回复</a>' +
+                            '</div>';
+
+                            comment_html = comment_html.format(data['pk'],data['username'], timeFormat(data['comment_time']), data['text'],data['content_type']);
                             $('#comment_lists').prepend(comment_html)
+
                         } else {
                             // 回复 尾部 append 找到对应的顶级评论，尾部append进行尾插
-                            var reply_html = '<div class="reply"><span>' + data['username'] + '</span><span>(' + timeFormat(data['comment_time']) + ')：</span><span>回复</span><span>' + data['reply_to'] + '</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:void(0)" onclick="reply(' + "'" + data['pk'] + "'" + ",'" + data['username'] + "'" + ')">回复</a></div>';
+                            {#var reply_html = '<div class="reply"><span>' + data['username'] + '</span><span>(' + timeFormat(data['comment_time']) + ')：</span><span>回复</span><span>' + data['reply_to'] + '</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:void(0)" onclick="reply(' + "'" + data['pk'] + "'" + ",'" + data['username'] + "'" + ')">回复</a></div>';#}
+                            var reply_html = '<div class="reply">' +
+                                        '<span>{1}</span>' +
+                                        '<span>({2})：</span>' +
+                                        '<span>回复</span>' +
+                                        '<span>{3}</span>' +
+                                        '<div id="comment_{0}">' +
+                                            '{4}' +
+                                        '</div>' +
+                                        '<div class="like" onclick="likeChange(this, \'{5}\', \'{0}\')">' +
+                                            '<span class="glyphicon glyphicon-thumbs-up"></span>' +
+                                            '<span class="liked_num"> 0</span>' +
+                                        '</div>' +
+                                        '<a href="javascript:void(0)" onclick="reply(\'{0}\',\'{1}\', \'True\')">回复</a>' +
+                                    '</div>';
+                            reply_html =  reply_html.format(data['pk'], data['username'], timeFormat(data['comment_time']), data['reply_to'], data['text'], data['content_type']);
                             $('#root_' + data['root_pk']).append(reply_html);
 
                         }
@@ -275,7 +303,8 @@
                             element.removeClass('active')
                         }
                         var element = $(obj.getElementsByClassName('liked_num'))
-                        element.text(data['data'])
+                        var result = ' ' + data['data'];
+                        element.text(result)
 
                     } else {
 

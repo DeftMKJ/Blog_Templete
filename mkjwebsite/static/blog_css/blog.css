@@ -88,7 +88,7 @@ div.like{
     color: #4e89c0;
     cursor: pointer;
     display: inline-block;
-    padding: 0.5em 0.3em;
+    padding: 0.5em 1em 0.5em 0.2em;
 }
 
 div.like span.active{

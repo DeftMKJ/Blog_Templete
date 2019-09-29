@@ -27,7 +27,7 @@ def SuccessResponse(like_num):
 def likes_update(request):
     user = request.user
     if not user.is_authenticated:
-        ErrorResponse('10001', '用户未登录')
+        return ErrorResponse('10001', '用户未登录')
 
     # 字符串而已
     content_type = request.GET.get('content_type', '')
@@ -39,7 +39,7 @@ def likes_update(request):
         model_class = content_type.model_class()
         model_obj = model_class.objects.get(pk=object_id)
     except ObjectDoesNotExist:
-        ErrorResponse('10002', '点赞对象不存在')
+        return ErrorResponse('10002', '点赞对象不存在')
 
 
     if request.GET.get('is_liked') != 'true':
