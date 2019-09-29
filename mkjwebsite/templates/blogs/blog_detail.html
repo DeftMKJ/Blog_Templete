@@ -109,7 +109,7 @@
                                     <span class="liked_num"> {% get_liked_counts comment %}</span>
                                 </div>
                                 {#                                <a href="javascript:reply({{ comment.pk }});">回复</a>#}
-                                <a href="javascript:void(0)"
+                                <a class="reply_link" href="javascript:void(0)"
                                    onclick="reply('{{ comment.pk }}','{{ comment.user.username }}', '{{ user.is_authenticated }}')">回复</a>
 
                                 {% for reply in comment.root_comment.all %}
@@ -128,7 +128,7 @@
                                             <span class="liked_num"> {% get_liked_counts reply %}</span>
                                         </div>
                                         {#                                        <a href="javascript:reply({{ reply.pk }});">回复</a>#}
-                                        <a href="javascript:void(0)"
+                                        <a class="reply_link" href="javascript:void(0)"
                                            onclick="reply('{{ reply.pk }}','{{ reply.user.username }}', '{{ user.is_authenticated }}')">回复</a>
                                     </div>
                                 {% endfor %}
@@ -257,7 +257,7 @@
                                 '<span class="glyphicon glyphicon-thumbs-up"></span>' +
                                 '<span class="liked_num"> 0</span>' +
                                 '</div>' +
-                                '<a href="javascript:void(0)" onclick="reply(\'{0}\',\'{1}\', \'True\')">回复</a>' +
+                                '<a class="reply_link" href="javascript:void(0)" onclick="reply(\'{0}\',\'{1}\', \'True\')">回复</a>' +
                                 '</div>';
 
                             comment_html = comment_html.format(data['pk'], data['username'], timeFormat(data['comment_time']), data['text'], data['content_type']);
@@ -278,7 +278,7 @@
                                 '<span class="glyphicon glyphicon-thumbs-up"></span>' +
                                 '<span class="liked_num"> 0</span>' +
                                 '</div>' +
-                                '<a href="javascript:void(0)" onclick="reply(\'{0}\',\'{1}\', \'True\')">回复</a>' +
+                                '<a class="reply_link" href="javascript:void(0)" onclick="reply(\'{0}\',\'{1}\', \'True\')">回复</a>' +
                                 '</div>';
                             reply_html = reply_html.format(data['pk'], data['username'], timeFormat(data['comment_time']), data['reply_to'], data['text'], data['content_type']);
                             $('#root_' + data['root_pk']).append(reply_html);
