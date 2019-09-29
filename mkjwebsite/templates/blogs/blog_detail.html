@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load comment_tags %}
 {% load read_tags %}
+{% load like_tags %}
 {% block cssstyle %}
     <link rel="stylesheet" href="{% static 'blog_css/blog.css' %}">
     <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
@@ -29,7 +30,13 @@
                     <li>阅读：{% get_total_read_count blog %}</li>
                     <li>评论：({% get_comment_count blog %})</li>
                 </ul>
-                <p class="blog_detail_content">{{ blog.content|safe }}</p>
+                <div class="blog_detail_content">{{ blog.content|safe }}</div>
+
+                <div class="like" onclick="likeChange(this, '{% get_content_type blog %}', '{{ blog.pk }}')">
+                    <span class="glyphicon glyphicon-thumbs-up {% get_liked_status blog %}"></span>
+                    <span class="liked_num">{% get_liked_counts blog %}</span>
+                    <span>喜欢</span>
+                </div>
 
                 <div>
 
@@ -95,8 +102,16 @@
                                 <div id="comment_{{ comment.pk }}">
                                     {{ comment.text|safe }}
                                 </div>
-{#                                <a href="javascript:reply({{ comment.pk }});">回复</a>#}
-                                <a href="javascript:void(0)" onclick="reply('{{ comment.pk }}','{{ comment.user.username }}')">回复</a>
+
+                                <div class="like"
+                                     onclick="likeChange(this, '{% get_content_type comment %}', '{{ comment.pk }}')">
+                                    <span class="glyphicon glyphicon-thumbs-up {% get_liked_status comment %}"></span>
+                                    <span class="liked_num">{% get_liked_counts comment %}</span>
+                                    <span>赞同</span>
+                                </div>
+                                {#                                <a href="javascript:reply({{ comment.pk }});">回复</a>#}
+                                <a href="javascript:void(0)"
+                                   onclick="reply('{{ comment.pk }}','{{ comment.user.username }}')">回复</a>
 
                                 {% for reply in comment.root_comment.all %}
                                     <div class="reply">
@@ -107,8 +122,16 @@
                                         <div id="comment_{{ reply.pk }}">
                                             {{ reply.text|safe }}
                                         </div>
-{#                                        <a href="javascript:reply({{ reply.pk }});">回复</a>#}
-                                        <a href="javascript:void(0)" onclick="reply('{{ reply.pk }}','{{ reply.user.username }}')">回复</a>
+
+                                        <div class="like"
+                                             onclick="likeChange(this, '{% get_content_type reply %}', '{{ reply.pk }}')">
+                                            <span class="glyphicon glyphicon-thumbs-up {% get_liked_status reply %}"></span>
+                                            <span class="liked_num">{% get_liked_counts reply %}</span>
+                                            <span>赞同</span>
+                                        </div>
+                                        {#                                        <a href="javascript:reply({{ reply.pk }});">回复</a>#}
+                                        <a href="javascript:void(0)"
+                                           onclick="reply('{{ reply.pk }}','{{ reply.user.username }}')">回复</a>
                                     </div>
                                 {% endfor %}
 
@@ -127,15 +150,26 @@
 
 {% block script_extend %}
     <script type="text/javascript">
+        // js 字符串拼接重写
+        String.prototype.format = function () {
+            console.log(arguments.length)
+            if (arguments.length == 0){ return this };
+            var str = this;
+            for (i = 0; i < arguments.length; i++) {
+                str =  str.replace(new RegExp("\\{"+i+"\\}","g"), arguments[i]);
+            }
+            return str;
+        }
+
         // 点击回复后把变淡隐藏属性赋值  reply_comment_id
         function reply(reply_comment_id, name) {
-            console.log(reply_comment_id)
-            console.log(name)
+            console.log(reply_comment_id);
+            console.log(name);
             $('#reply_comment_id').val(reply_comment_id);
-            var html = $('#comment_' + reply_comment_id).html();
-            var html2 = '<p>回复:' + name + '</p>';
+            let html = $('#comment_' + reply_comment_id).html();
+            let html2 = '<p>回复:' + name + '</p>';
             $('#reply_content').html(html);
-            $('#reply_title').html(html2)
+            $('#reply_title').html(html2);
             $('#reply_content_container').show();
 
 
@@ -144,23 +178,24 @@
             });
         }
 
+        // 格式化字符串
         function numFormat(num) {
             return ('00' + num).substr(-2);
         }
 
         function timeFormat(timestamp) {
             console.log(timestamp)
-            var date = new Date(timestamp * 1000);
-            Y = date.getFullYear() + '-';
-            M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-            D = numFormat(date.getDate()) + ' ';
-            h = numFormat(date.getHours()) + ':';
-            m = numFormat(date.getMinutes()) + ':';
-            s = numFormat(date.getSeconds());
-            return Y + M + D + ' ' + h + ':' + m + ':' + s;
+            let date = new Date(timestamp * 1000);
+            year = date.getFullYear() + '-';
+            month = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+            day = numFormat(date.getDate()) + ' ';
+            hour = numFormat(date.getHours()) + ':';
+            minus = numFormat(date.getMinutes()) + ':';
+            second = numFormat(date.getSeconds());
+            return year + month + day + ' ' + hour + minus + second;
         }
 
-
+        // 提交评论表单
         $("#comment_form").submit(function () {
             // 清空之前的错误
             $("#comment_error").text('');
@@ -193,11 +228,12 @@
                         // 清空editor
                         CKEDITOR.instances['id_text'].setData('');
                         // 清空评论信息
-                        $('#reply_content_container').hide()
+                        $('#reply_content_container').hide();
                         // 移除暂无评论
-                        $('#no_comment').remove()
+                        $('#no_comment').remove();
                         // 表单评论id置空
                         $('#reply_comment_id').val('0')
+                        $("#comment_error").text('评论成功');
 
                     } else {
                         // 失败
@@ -212,6 +248,47 @@
             return false;
 
         });
+
+        // 点赞
+        function likeChange(obj, content_type, object_id) {
+            // is_liked YES 代表已点赞
+            var is_liked = obj.getElementsByClassName('active').length != 0
+
+            console.log(is_liked)
+            $.ajax({
+                url: '{% url 'likes_module:likes_update' %}',
+                type: 'GET', // TODO ajax提交POST表单
+                data: {
+                    content_type: content_type,
+                    object_id: object_id,
+                    is_liked: is_liked,
+                },
+                cache: false,
+                success: function (data) {
+                    if (data['status'] == 'SUCCESS') {
+                        var element = $(obj.getElementsByClassName('glyphicon'))
+                        if (!is_liked) {
+                            // 点赞
+                            element.addClass('active')
+                        } else {
+                            // 取消点赞
+                            element.removeClass('active')
+                        }
+                        var element = $(obj.getElementsByClassName('liked_num'))
+                        element.text(data['data'])
+
+                    } else {
+
+                        alert(data['message'])
+                    }
+
+                },
+                error: function (xhr) {
+                    console.log(xhr)
+
+                }
+            })
+        }
     </script>
 {% endblock %}
 

@@ -38,8 +38,9 @@ ul.blog_detail_ul li {
     margin-right: 1em;
 }
 
-p.blog_detail_content {
+div.blog_detail_content {
     text-indent: 2em;
+    margin-bottom: 2em;
 }
 
 div.blog_page_container {
@@ -81,4 +82,15 @@ div#reply_content_container{
 p#reply_title{
     border-bottom: 1px dashed #ccc;
     padding-bottom: 1em;
+}
+
+div.like{
+    color: #4e89c0;
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.5em 0.3em;
+}
+
+div.like span.active{
+    color: red;
 }

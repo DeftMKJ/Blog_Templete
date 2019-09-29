@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load comment_tags %}
 {% load read_tags %}
+{% load like_tags %}
 
 {% block cssstyle %}
     <link rel="stylesheet" href="{% static 'blog_css/blog.css' %}">
@@ -42,6 +43,9 @@
                                         </li>
                                         <li>
                                             评论:{% get_comment_count blog %}
+                                        </li>
+                                        <li>
+                                            点赞:{% get_liked_counts blog %}
                                         </li>
                                     </ul>
                                     <p>{{ blog.content |striptags | truncatechars:130 |safe}}</p>

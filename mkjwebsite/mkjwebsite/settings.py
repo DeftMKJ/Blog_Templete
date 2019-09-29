@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'blogs', # 博客应用
     'read_statistics', # 阅读统计模块
     'comment', # 评论模块
+    'likes', # 点赞模块
 ]
 
 MIDDLEWARE = [
