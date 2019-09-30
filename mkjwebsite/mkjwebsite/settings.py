@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'read_statistics', # 阅读统计模块
     'comment', # 评论模块
     'likes', # 点赞模块
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'user.context_processors.login_modal_form',
             ],
         },
     },

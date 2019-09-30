@@ -7,13 +7,6 @@ import datetime
 from django.utils import timezone
 from django.db.models import Sum
 from django.core.cache import cache
-from django.contrib import auth
-from django.urls import reverse
-from .forms import LoginForm, RegisterForm
-from django.contrib import auth
-from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django import forms
 
 
 def get_seven_hots_read_statistics():
@@ -50,48 +43,3 @@ def home(request):
     return render(request, 'home.html', context)
 
 
-def login(request):
-    if request.method == 'POST':
-        loginForm = LoginForm(request.POST)
-        if loginForm.is_valid():
-            user = loginForm.cleaned_data['user']
-            auth.login(request, user)
-            return redirect(request.GET.get('from', reverse('home')))
-    else:
-        loginForm = LoginForm()
-    context = {}
-    context['loginform'] = loginForm
-    return render(request, 'login.html', context)
-
-def login_modal(request):
-    loginForm = LoginForm(request.POST)
-    res = {}
-    if loginForm.is_valid():
-        user = loginForm.cleaned_data['user']
-        auth.login(request, user)
-        res['code'] = '200'
-    else:
-        res['code'] = '10008'
-    return JsonResponse(res)
-
-
-def register(request):
-    if request.method == 'POST':
-        registerform = RegisterForm(request.POST)
-        if registerform.is_valid():
-            username = registerform.cleaned_data['username']
-            email = registerform.cleaned_data['email']
-            password = registerform.cleaned_data['password']
-
-            user = User.objects.create_user(username, email, password)
-            user.save()
-
-            user = auth.authenticate(username=username, password=password)
-            auth.login(request, user)
-
-            return redirect(request.GET.get('from', reverse('home')))
-    else:
-        registerform = RegisterForm()
-    context = {}
-    context['registerform'] = registerform
-    return render(request, 'register.html', context)

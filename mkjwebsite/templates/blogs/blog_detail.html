@@ -87,8 +87,8 @@
 
                     {% else %}
                         赶紧登录，不然评论个蛋蛋~
-                        <a class="btn btn-primary" href="{% url 'login' %}?from={{ request.get_full_path }}">登陆</a>
-                        <a class="btn btn-danger" href="{% url 'register' %}?from={{ request.get_full_path }}">注册</a>
+                        <a class="btn btn-primary" href="{% url 'user:login' %}?from={{ request.get_full_path }}">登陆</a>
+                        <a class="btn btn-danger" href="{% url 'user:register' %}?from={{ request.get_full_path }}">注册</a>
                     {% endif %}
                 </div>
                 <div class="comment_container">
@@ -139,34 +139,6 @@
                         {% endfor %}
 
                     </div>
-                </div>
-            </div>
-        </div>
-        <!-- Modal -->
-        <div class="modal fade bs-example-modal-sm" id="login_modal" tabindex="-1" role="dialog"
-             aria-labelledby="myModalLabel">
-            <div class="modal-dialog modal-sm" role="document">
-                <div class="modal-content">
-                    <form id="login_modal_form" action="" method="POST">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                    aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel">登录</h4>
-                        </div>
-                        <div class="modal-body">
-
-                            {% csrf_token %}
-                            {% for field in loginform %}
-                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {{ field }}
-                            {% endfor %}
-                            <span id="login_modal_tips" class="text-danger"></span>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                            <button type="submit" class="btn btn-primary">登录</button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
@@ -229,6 +201,7 @@
 
         // 提交评论表单
         $("#comment_form").submit(function () {
+
             // 清空之前的错误
             $("#comment_error").text('');
             if (CKEDITOR.instances["id_text"].document.getBody().getText().trim() == '') {
@@ -310,6 +283,7 @@
 
         // 点赞
         function likeChange(obj, content_type, object_id) {
+            console.log('hhe')
             // is_liked YES 代表已点赞
             var is_liked = obj.getElementsByClassName('active').length != 0
 
@@ -354,29 +328,6 @@
                 }
             })
         }
-
-        $('#login_modal_form').submit(function () {
-            $('#login_modal_tips').text('')
-            $.ajax({
-                url:{%url 'login_modal' %},
-                data:$(this).serialize(),
-                type:'POST',
-                cache:false,
-                success:function (data) {
-                    if (data['code'] == 200){
-                        $('#login_modal_tips').text('')
-                        window.location.reload()
-                    }else {
-                        $('#login_modal_tips').text('用户名或者密码不正确')
-                    }
-
-                },
-                error:function (xhr) {
-                    consolo.log(xhr)
-                }
-            });
-            return false;
-        })
 
     </script>
 {% endblock %}

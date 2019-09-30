@@ -16,50 +16,121 @@
 </head>
 <body>
 <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container-fluid"
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="{% url 'home' %}">个人博客网站</a>
-    </div>
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'home' %}">个人博客网站</a>
+        </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-            <li class="{% block home_active %}{% endblock %}"><a href="{% url 'home' %}">首页</a></li>
-            <li class="{% block blog_active %}{% endblock %}"><a href="{% url 'blogs_module:blog_index' %}">博客</a></li>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                   aria-expanded="false">更多 <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="{% url 'home' %}">首页</a></li>
-                    <li><a href="{% url 'blogs_module:blog_index' %}">博客</a></li>
-                    <li><a href="{% url 'home' %}">Something else here</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="{% url 'home' %}">小游戏</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="{% url 'home' %}">老司机</a></li>
-                </ul>
-            </li>
-        </ul>
-        <form class="navbar-form navbar-left">
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search">
-            </div>
-            <button type="submit" class="btn btn-default">搜索</button>
-        </form>
-    </div><!-- /.navbar-collapse -->
-</nav>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="{% block home_active %}{% endblock %}"><a href="{% url 'home' %}">首页</a></li>
+                <li class="{% block blog_active %}{% endblock %}"><a href="{% url 'blogs_module:blog_index' %}">博客</a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">更多 <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'home' %}">首页</a></li>
+                        <li><a href="{% url 'blogs_module:blog_index' %}">博客</a></li>
+                        <li><a href="{% url 'home' %}">Something else here</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'home' %}">小游戏</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'home' %}">老司机</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">搜索</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right" style="margin-right: 10px">
+                {% if not user.is_authenticated %}
+                    <li><a href="{% url 'user:login' %}?from={{ request.get_full_path }}">登陆</a></li>
+                    <li><a href="{% url 'user:register' %}?from={{ request.get_full_path }}">注册</a></li>
+                {% else %}
+                    <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">{{ user.username }} <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'user:user_info' %}">个人中心</a></li>
+                        <li><a href="{% url 'user:logout' %}?from={{ request.get_full_path }}">退出</a></li>
+                    </ul>
+                    </li>
+                {% endif %}
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div>
 </nav>
 {% block content %}
 
 {% endblock %}
+
+<!-- Modal -->
+<div class="modal fade bs-example-modal-sm" id="login_modal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <form id="login_modal_form" action="" method="POST">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">登录</h4>
+                </div>
+                <div class="modal-body">
+
+                    {% csrf_token %}
+                    {#每个页面都要传，因此写个context_processors来默认携带，类似user和request#}
+                    {% for field in login_modal_form %}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                    {% endfor %}
+                    <span id="login_modal_tips" class="text-danger"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">登录</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#login_modal_form').submit(function () {
+        $('#login_modal_tips').text('')
+        $.ajax({
+            url: "{% url 'user:login_modal' %}",
+            data: $(this).serialize(),
+            type: 'POST',
+            cache: false,
+            success: function (data) {
+                if (data['code'] == 200) {
+                    $('#login_modal_tips').text('')
+                    window.location.reload()
+                } else {
+                    $('#login_modal_tips').text('用户名或者密码不正确')
+                }
+
+            },
+            error: function (xhr) {
+                consolo.log(xhr)
+            }
+        });
+        return false;
+    })
+</script>
 
 {% block script_extend %}
 
