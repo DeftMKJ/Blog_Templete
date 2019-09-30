@@ -27,13 +27,13 @@ def comment_update(request):
         comment.save()
 
         res['status'] = "SUCCESS"
-        res['username'] = comment.user.username
+        res['username'] = comment.user.get_nickname_or_username()
         res['comment_time'] = comment.comment_time.timestamp()
         res['text'] = comment.text
         res['content_type'] = ContentType.objects.get_for_model(comment).model
 
         if not parent is None:
-            res['reply_to'] = comment.reply_to.username
+            res['reply_to'] = comment.reply_to.get_nickname_or_username()
         else:
             res['reply_to'] = ''
         res['pk'] = comment.pk

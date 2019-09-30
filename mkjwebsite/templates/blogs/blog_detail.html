@@ -66,7 +66,7 @@
                     {% if user.is_authenticated %}
                         <form id="comment_form" action="{% url 'comment_module:comment_update' %}" method="post"
                               style="overflow:hidden">
-                            <label>当前登录用户：{{ user }} 欢迎评论~</label>
+                            <label>当前登录用户：{{ user.get_nickname_or_username }} 欢迎评论~</label>
 
                             {#  先隐藏 回复会用到 #}
                             <div id="reply_content_container" style="display:none;">
@@ -97,7 +97,7 @@
                         {% get_comment_lists blog as comments %}
                         {% for comment in comments %}
                             <div id="root_{{ comment.pk }}" class="comment">
-                                <span>{{ comment.user.username }}</span>
+                                <span>{{ comment.user.get_nickname_or_username }}</span>
                                 <span>({{ comment.comment_time|date:"Y-m-d H:i:s" }})：</span>
                                 <div id="comment_{{ comment.pk }}">
                                     {{ comment.text|safe }}
@@ -110,14 +110,14 @@
                                 </div>
                                 {#                                <a href="javascript:reply({{ comment.pk }});">回复</a>#}
                                 <a class="reply_link" href="javascript:void(0)"
-                                   onclick="reply('{{ comment.pk }}','{{ comment.user.username }}', '{{ user.is_authenticated }}')">回复</a>
+                                   onclick="reply('{{ comment.pk }}','{{ comment.user.get_nickname_or_username }}', '{{ user.is_authenticated }}')">回复</a>
 
                                 {% for reply in comment.root_comment.all %}
                                     <div class="reply">
-                                        <span>{{ reply.user.username }}</span>
+                                        <span>{{ reply.user.get_nickname_or_username }}</span>
                                         <span>({{ reply.comment_time|date:"Y-m-d H:i:s" }})：</span>
                                         <span>回复</span>
-                                        <span>{{ reply.reply_to.username }}</span>
+                                        <span>{{ reply.reply_to.get_nickname_or_username }}</span>
                                         <div id="comment_{{ reply.pk }}">
                                             {{ reply.text|safe }}
                                         </div>
@@ -129,7 +129,7 @@
                                         </div>
                                         {#                                        <a href="javascript:reply({{ reply.pk }});">回复</a>#}
                                         <a class="reply_link" href="javascript:void(0)"
-                                           onclick="reply('{{ reply.pk }}','{{ reply.user.username }}', '{{ user.is_authenticated }}')">回复</a>
+                                           onclick="reply('{{ reply.pk }}','{{ reply.user.get_nickname_or_username }}', '{{ user.is_authenticated }}')">回复</a>
                                     </div>
                                 {% endfor %}
 

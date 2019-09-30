@@ -6,8 +6,10 @@ from django.contrib.auth.models import User
 # forms.ModelForm 与 forms.Form
 # 前者需要写入数据库，进行数据迁移  后者 如果提交表单后 不会对数据库就行修改，则继承Form类。
 class LoginForm(forms.Form):
-    username = forms.CharField(label='用户名',widget=forms.TextInput(attrs={'class':'form-control','placeholder':'请输入用户名'}))
-    password = forms.CharField(label='密码', widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'请输入密码'}))
+    username = forms.CharField(label='用户名',
+                               widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '请输入用户名'}))
+    password = forms.CharField(label='密码',
+                               widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '请输入密码'}))
 
     # hook isvalid方法后续的验证
     def clean(self):
@@ -21,25 +23,24 @@ class LoginForm(forms.Form):
         return self.cleaned_data
 
 
-
 class RegisterForm(forms.Form):
     username = forms.CharField(label='用户名',
                                max_length=30,
                                min_length=3,
                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '请输入3-30位用户名'}))
     email = forms.EmailField(label='邮箱',
-                               widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': '请输入邮箱'}))
+                             widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': '请输入邮箱'}))
     password = forms.CharField(label='密码',
                                widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '请输入密码'}))
     password_again = forms.CharField(label='密码',
-                               widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '请再次输入密码'}))
+                                     widget=forms.PasswordInput(
+                                         attrs={'class': 'form-control', 'placeholder': '请再次输入密码'}))
 
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError('用户名已存在')
         return username
-
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -56,17 +57,24 @@ class RegisterForm(forms.Form):
         return password_again
 
 
+class NickNameForm(forms.Form):
+    nickname_new = forms.CharField(label='新的昵称',
+                                   max_length=15,
+                                   widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '请输入新的昵称'}))
 
+    def __init__(self, *args, **kwargs):
+        if 'user' in kwargs:
+            self.user = kwargs.pop('user')
+        super(NickNameForm, self).__init__(*args, **kwargs)
 
+    def clean(self):
+        if self.user.is_authenticated:
+            self.cleaned_data['user'] = self.user
+        else:
+            raise forms.ValidationError('用户未登录')
 
-
-
-
-
-
-
-
-
-
-
-
+    def clean_nickname_new(self):
+        nickname = self.cleaned_data.get('nickname_new', '')
+        if nickname == '':
+            raise forms.ValidationError('新的昵称不能为空')
+        return nickname
