@@ -22,23 +22,37 @@
     <div class="containter">
         <div class="row">
             <div class="col-xs-4 col-xs-offset-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">登录</h3>
+                {% if not user.is_authenticated %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">登录</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                {% for field in registerform %}
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    <p class="text-danger">{{ field.errors.as_text }}</p>
+                                {% endfor %}
+                                <span class="pull-left text-danger">{{ loginform.non_field_errors }}</span>
+                                <input type="submit" value="注册" class="btn btn-primary pull-right">
+                            </form>
+                        </div>
                     </div>
-                    <div class="panel-body">
-                        <form action="" method="POST">
-                            {% csrf_token %}
-                            {% for field in registerform %}
-                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {{ field }}
-                                <p class="text-danger">{{ field.errors.as_text }}</p>
-                            {% endfor %}
-                            <span class="pull-left text-danger">{{ loginform.non_field_errors }}</span>
-                            <input type="submit" value="注册" class="btn btn-primary pull-right">
-                        </form>
+                {% else %}
+                    <div style="text-align: center">
+                        <div>已登录，跳转至首页...</div>
+                        <img src="/media/loading1.gif" alt="">
                     </div>
-                </div>
+                    <script type="text/javascript">
+                        setTimeout(function () {
+                            window.location.href = '{% url 'home' %}';
+                        }, 1000);
+
+                    </script>
+
+                {% endif %}
             </div>
         </div>
     </div>
