@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import auth
 from django.contrib.auth.models import User
+from .models import Introduction
 
 
 # forms.ModelForm 与 forms.Form
@@ -74,7 +75,59 @@ class NickNameForm(forms.Form):
             raise forms.ValidationError('用户未登录')
 
     def clean_nickname_new(self):
-        nickname = self.cleaned_data.get('nickname_new', '')
+        nickname = self.cleaned_data.get('nickname_new', '').strip()
         if nickname == '':
             raise forms.ValidationError('新的昵称不能为空')
+
+        if Introduction.objects.filter(nick_name=nickname).exists():
+            raise forms.ValidationError('昵称已被使用')
         return nickname
+
+
+class BindEmailForm(forms.Form):
+    email = forms.EmailField(
+        label='邮箱',
+        widget=forms.EmailInput(
+            attrs={'class': 'form-control', 'placeholder': '请输入正确的邮箱'}
+        )
+    )
+
+    verification_code = forms.CharField(
+        label='验证码',
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': '请输入验证码'}
+        )
+    )
+
+    def __init__(self, *args, **kwargs):
+        if 'request' in kwargs:
+            self.request = kwargs.pop('request')
+        super(BindEmailForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        if self.request.user.is_authenticated:
+            self.cleaned_data['user'] = self.request.user
+        else:
+            raise forms.ValidationError('用户未登录~')
+
+        if self.request.user.email:
+            raise forms.ValidationError('用户已绑定邮箱~')
+
+        code = self.request.session.get('bind_email_code', '')
+        input_code = self.cleaned_data.get('verification_code', '')
+        if not (code != '' and code == input_code):
+            raise forms.ValidationError('验证码不正确')
+
+        return self.cleaned_data
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('邮箱已被绑定~')
+        return email
+
+    def clean_verification_code(self):
+        code = self.cleaned_data.get('verification_code', '').strip()
+        if code == '':
+            raise forms.ValidationError('验证码不能为空~')
+        return code

@@ -10,4 +10,6 @@ urlpatterns = [
     re_path(r'^logout/$', views.logout, name='logout'),
     re_path(r'^user_info/$', views.user_info, name='user_info'),
     re_path(r'^change_nickname/$', views.change_nick_name, name='change_nickname'),
+    re_path(r'^bind_email/$', views.bind_email, name='bind_email'),
+    re_path(r'^send_email_code/$', views.send_email_code, name='send_email_code'),
 ]

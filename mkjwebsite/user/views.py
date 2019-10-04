@@ -1,10 +1,30 @@
+import re
+import random
+import string
+import time
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .forms import LoginForm, RegisterForm, NickNameForm
+from django.core.mail import send_mail
+from .forms import LoginForm, RegisterForm, NickNameForm, BindEmailForm
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from .models import Introduction
+
+
+def ErrorResponse(code, message):
+    res = {}
+    res['code'] = '%s' % code
+    res['message'] = message
+    res['status'] = 'ERROR'
+    return JsonResponse(res)
+
+
+def SuccessResponse():
+    res = {}
+    res['status'] = 'SUCCESS'
+    res['code'] = '200'
+    return JsonResponse(res)
 
 
 def login_modal(request):
@@ -85,3 +105,55 @@ def change_nick_name(request):
     context['form'] = form
     return render(request, 'form.html', context)
 
+
+def bind_email(request):
+    redirect_to = request.GET.get('from', reverse('home'))
+    if request.method == 'POST':
+        form = BindEmailForm(request.POST, request=request)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            request.user.email = email
+            request.user.save()
+            return redirect(redirect_to)
+            # TODO 输入错误
+            # return ErrorResponse('500', list(form.errors.values())[0][0])
+    else:
+        form = BindEmailForm()
+
+    context = {}
+    context['page_title'] = '绑定邮箱'
+    context['form_title'] = '绑定邮箱'
+    context['submit_text'] = '绑定'
+    context['retern_back_url'] = redirect_to
+    context['form'] = form
+    return render(request, 'user/bind_email.html', context)
+
+
+def send_email_code(request):
+    email = request.GET.get('email', '')
+    if email == '':
+        return ErrorResponse('10006', '绑定邮箱为空')
+    if not re.match(r'^[0-9a-zA-Z_]{0,19}@[0-9a-zA-Z]{1,13}\.[com,cn,net]{1,3}$', email):
+        return ErrorResponse('10007', '绑定邮箱格式验证失败')
+
+    if User.objects.filter(email=email).exists():
+        return ErrorResponse('10009', '邮箱已被绑定~')
+
+    code = ''.join(random.sample(string.digits + string.ascii_letters, 4))
+
+    now = int(time.time())
+    send_time = request.session.get('send_code_time', 0)
+    if now - send_time < 30:
+        return ErrorResponse('10008', '验证码发送太频繁')
+    else:
+        request.session['send_code_time'] = now
+        request.session['bind_email_code'] = code
+
+        send_mail(
+            '绑定邮箱',
+            '验证码：%s' % code,
+            '714831204@qq.com',
+            [email],
+            fail_silently=False,
+        )
+        return SuccessResponse()
