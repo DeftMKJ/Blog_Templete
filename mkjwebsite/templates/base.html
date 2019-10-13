@@ -72,6 +72,7 @@
                             <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'user:user_info' %}">个人中心</a></li>
+                            <li><a href="{% url 'user:change_password' %}">修改密码</a></li>
                             {% if user.is_staff or user.is_superuser %}
                                 <li><a href="{% url 'admin:index' %}">后台管理</a></li>
                             {% endif %}

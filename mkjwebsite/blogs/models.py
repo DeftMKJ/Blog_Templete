@@ -4,6 +4,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.contenttypes.models import ContentType
 from read_statistics.models import ReadNumExtension, ReadNumDetail
 from django.contrib.contenttypes.fields import GenericRelation
+from django.urls import reverse
 
 
 class BlogType(models.Model):
@@ -25,6 +26,13 @@ class Blog(models.Model,ReadNumExtension):
 
     def __str__(self):
         return "<Blog:%s>" % self.title
+
+    def get_url(self):
+        return reverse('blogs:blog_details', args=[self.pk])
+
+
+    def get_email(self):
+        return self.author.email
 
     # 添加作用分页，主要需要数据库迁移
     class Meta:

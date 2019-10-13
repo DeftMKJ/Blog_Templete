@@ -12,4 +12,6 @@ urlpatterns = [
     re_path(r'^change_nickname/$', views.change_nick_name, name='change_nickname'),
     re_path(r'^bind_email/$', views.bind_email, name='bind_email'),
     re_path(r'^send_email_code/$', views.send_email_code, name='send_email_code'),
+    re_path(r'^change_password/$', views.change_password, name='change_password'),
+    re_path(r'^forget_password/$', views.forget_password, name='forget_password'),
 ]

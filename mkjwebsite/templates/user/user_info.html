@@ -25,7 +25,7 @@
                         <li>昵称：{{ user.get_nickname }} <a href="{% url 'user:change_nickname' %}?from={{ request.get_full_path }}">修改昵称</a></li>
                         <li>邮箱：{% if user.email %}{{ user.email }}{% else %}<a href="{% url 'user:bind_email' %}">绑定邮箱</a>{% endif %}</li>
                         <li>上次登录时间：{{ user.last_login|date:"Y-m-d H:i:s" }}</li>
-                        <li><a href="">修改密码</a></li>
+                        <li><a href="{% url 'user:change_password' %}">修改密码</a></li>
                     </ul>
                 {% else %}
                     <span>未登录，跳转至首页。。。</span>

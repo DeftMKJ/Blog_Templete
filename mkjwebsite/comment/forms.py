@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import ObjectDoesNotExist
 from ckeditor.widgets import CKEditorWidget
 from .models import Comment
+from django.utils.html import strip_tags
 
 
 class CommentForm(forms.Form):
@@ -52,4 +53,9 @@ class CommentForm(forms.Form):
         else:
             raise forms.ValidationError('回复出错')
         return reply_comment
+
+    # TODO 避免评论的内容注入脚本或者标签，是否需要开启
+    def clean_text(self):
+        text  = strip_tags(self.cleaned_data['text'])
+        return text
 

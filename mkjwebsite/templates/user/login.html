@@ -35,7 +35,9 @@
                                     {{ field }}
                                     <p class="text-danger">{{ field.errors.as_text }}</p>
                                 {% endfor %}
-                                <span class="pull-left text-danger">{{ loginform.non_field_errors }}</span>
+                                <span class="text-danger">{{ loginform.non_field_errors }}</span>
+                                <div class="clearfix"></div>
+                                <a class="pull-left" href="{% url 'user:forget_password' %}">忘记密码?</a>
                                 <input type="submit" value="登录" class="btn btn-primary pull-right">
                             </form>
                         </div>

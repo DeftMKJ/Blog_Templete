@@ -25,7 +25,7 @@
                 {% if not user.is_authenticated %}
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title">登录</h3>
+                            <h3 class="panel-title">注册</h3>
                         </div>
                         <div class="panel-body">
                             <form action="" method="POST">
@@ -35,7 +35,9 @@
                                     {{ field }}
                                     <p class="text-danger">{{ field.errors.as_text }}</p>
                                 {% endfor %}
-                                <span class="pull-left text-danger">{{ loginform.non_field_errors }}</span>
+                                <span class="text-danger">{{ loginform.non_field_errors }}</span>
+                                <div class="clearfix"></div>
+                                <button id="send_code" class="btn btn-primary">发送验证码</button>
                                 <input type="submit" value="注册" class="btn btn-primary pull-right">
                             </form>
                         </div>
@@ -58,3 +60,53 @@
     </div>
 
 {% endblock %}
+
+{% block script_extend %}r
+
+    <script type="text/javascript">
+        $('#send_code').click(function () {
+            var email =  $('#id_email').val();
+            if (email == ''){
+                $('#err_tips').text('邮箱不能为空');
+            }
+            // 前端可以正则 TODO 优化错误是否倒计时
+            $.ajax({
+                url:"{% url 'user:send_email_code' %}",
+                method: "GET",
+                data:{
+                    email:email,
+                    send_type:'register_send_code',
+                },
+                cache:false,
+                success:function (data) {
+                    if (data['code'] == 200){
+
+                    } else {
+                        alert(data['message'])
+                    }
+                }
+
+            });
+            // 把按钮变灰
+            $(this).addClass('disabled');
+            $(this).attr('disabled', true);
+            var time = 30;
+            $(this).text(time + 's');
+            var interval = setInterval(() => {
+                if(time <= 0){
+                    clearInterval(interval);
+                    $(this).removeClass('disabled');
+                    $(this).attr('disabled', false);
+                    $(this).text('发送验证码');
+                    return false;
+                }
+                time --;
+                $(this).text(time + 's');
+            }, 1000);
+            return false
+        });
+    </script>
+
+{% endblock %}
+
+

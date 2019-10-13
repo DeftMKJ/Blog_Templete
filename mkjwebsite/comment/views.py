@@ -26,6 +26,8 @@ def comment_update(request):
             comment.reply_to = parent.user
         comment.save()
 
+        comment.submit_comment()
+
         res['status'] = "SUCCESS"
         res['username'] = comment.user.get_nickname_or_username()
         res['comment_time'] = comment.comment_time.timestamp()
